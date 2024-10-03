@@ -43,6 +43,8 @@ namespace GenerateDecoTiles
         static string seedStr = "0";
         static string areaStr = "50";
         static string countStr = "25";
+        static string firstAngleStr = "0";
+        static string secondAngleStr = "360";
         public static void OnGUI(UnityModManager.ModEntry modEntry)
         {
             // Define static variables so that their values persist between frames
@@ -52,6 +54,8 @@ namespace GenerateDecoTiles
             int seed = 0;
             int area = 0;
             int count = 0;
+            int firstAngle = 0;
+            int secondAngle = 0;
 
             // Add labels and corresponding input fields
             GUILayout.Label("First Parallax");
@@ -69,6 +73,12 @@ namespace GenerateDecoTiles
             GUILayout.Label("Count");
             countStr = GUILayout.TextField(countStr);
 
+            GUILayout.Label("First Angle");
+            firstAngleStr = GUILayout.TextField(firstAngleStr);
+
+            GUILayout.Label("Second Angle");
+            secondAngleStr = GUILayout.TextField(secondAngleStr);
+
             // Parse the input values from strings to integers
             try { firstParallax = Convert.ToInt32(firstParallaxStr); }
             catch { firstParallax = 0; }
@@ -84,6 +94,12 @@ namespace GenerateDecoTiles
 
             try { count = Convert.ToInt32(countStr); }
             catch { count = 0; }
+
+            try { firstAngle = Convert.ToInt32(firstAngleStr); }
+            catch { firstAngle = 0; }
+
+            try { secondAngle = Convert.ToInt32(secondAngleStr); }
+            catch { secondAngle = 0; }
 
             if (GUILayout.Button("Generate"))
             {
@@ -114,11 +130,14 @@ namespace GenerateDecoTiles
                             if (parallax < 0) scale = Math.Abs(parallax) + 100;
                             else scale = 100 - parallax;
 
+                            int trackAngle = random.Next(firstAngle, secondAngle);
+
+                            levelEvent.data["trackAngle"] = trackAngle;
+
                             levelEvent.data["scale"] = new Vector2(scale, scale);
                             levelEvent.data["rotation"] = rotation;
 
                             levelEvent.floor = scnEditor.instance.selectedFloors[0].seqID;
-                            scrDecorationManager.instance.ResetDecorations();
 
                             CustomLevelHelper.AddDecoration(levelEvent);
                         }
